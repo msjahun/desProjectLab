@@ -1,0 +1,11 @@
+ it Compile run_des.o that will be used for encrypted and decrypt
+ gcc -O3 des.c run_des.c -o run_des.o
+ 
+creates keyfile and generates a key string inside the file
+ ./run_des.o -g /home/folder(where its saved)/keyfile.key
+ 
+ uses keyfile on sample.txt(we create it and write something in it) and creates an encrypted version of sample.txt as sample.enc 
+./run_des.o -e /home/folder/keyfile.key /home/folder/sample.txt /home/folder/sample.enc
+
+by using keyfile.key again, we use it on sample.enc (encrypted text) and decrypt it and save it to sample_decrypted.txt in same folder
+./run_des.o -d /home/folder/keyfile.key /home/folder/sample.enc /home/folder/sample_decrypted.txt
