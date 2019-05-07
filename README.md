@@ -2,7 +2,7 @@
 [![GCC](https://img.shields.io/badge/C%20-Programming-brightgreen.svg)](https://github.com/msjahun/desProjectLab)
 [![GCC](https://img.shields.io/badge/DES-Encryption-red.svg)](https://github.com/msjahun/desProjectLab)
 [![GCC](https://img.shields.io/badge/gcc-compiler-orange.svg)](https://github.com/msjahun/desProjectLab)
-<h3>DES messaging/file transfer service using with DES encryption Baked in </h3>
+<h3>Client/Server messaging/file transfer service Secured with DES encryption </h3>
 The program can act as both client and server and since we’re using sockets communication is bi-directional, 
 it Compile run_des.o that will be used for encrypted and decrypt
  <br>gcc  des.c run_des.c -o run_des
