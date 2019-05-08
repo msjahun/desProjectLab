@@ -9,3 +9,6 @@ creates keyfile and generates a key string inside the file
 
 by using keyfile.key again, we use it on sample.enc (encrypted text) and decrypt it and save it to sample_decrypted.txt in same folder
 ./run_des.o -d /home/folder/keyfile.key /home/folder/sample.enc /home/folder/sample_decrypted.txt
+
+I'm still fixing the scanf read and save to file bug, so the two functions and were they are called are messed up
+Fixed the issue by using underscore when entering text, it still needs more fixing
