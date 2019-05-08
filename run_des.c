@@ -39,6 +39,17 @@ static FILE *key_file, *input_file, *output_file;
 //function prototypes and functions
 int Des_function(int argc, char *argv[]);
 
+int read_line(char str[], int n){
+	int ch, i = 0;
+
+	while((ch = getchar()) != '\n')
+	if (i<n)
+	str[i++] = ch;
+	str[i] = '\0'; /*terminates strings */
+	return i; /* number of characters stored */
+
+}
+
 void clearbuff(char buff[])
 {
 	int i = 0;
@@ -145,13 +156,16 @@ int ReceiveFileViaNetwork(int argc, char **argv)
 	}
 	clearbuff(buffer);
 	/* Receiving and printing a reply from server */
+	printf("\n\nReceived Data:\n");
 	while (n = recv(connfd, buffer, sizeof(buffer), 0) > 0)
 	{
-		//		printf("%s",buf);
+			printf("%s",buffer);
 		write(fdnew, buffer, howManyChars(buffer));
 		clearbuff(buffer);
 	}
-close(connfd);
+printf("\nEnd of Data received\n\n");
+    close(connfd);
+	
 	printf("File transfer complete TCP CLIENT terminated...\n");
 
 	printf("the file was received successfully\n");
@@ -159,12 +173,11 @@ close(connfd);
 	return 0;
 }
 
+//here this function content
 int CreateWriteDataToFile(char *argv)
 {
-
-	/* Variable to store user content */
-	char data[BUFFER_SIZE];
-
+/* Variable to store user content */
+char data[1024];
 	/* File pointer to hold reference to our file */
 	FILE *fPtr;
 
@@ -184,8 +197,9 @@ int CreateWriteDataToFile(char *argv)
 
 	/* Input contents from user to store in file */
 	printf("Enter contents to store in file : ");
-	fflush(stdout);
-	scanf("%[^\n]%*c", data);
+	scanf("%s", data);
+/* Write data to file */
+printf("Input is %s: ", data);
 
 	/* Write data to file */
 	fputs(data, fPtr);
@@ -196,7 +210,8 @@ int CreateWriteDataToFile(char *argv)
 	/* Success message */
 	printf("File created and saved successfully.\n");
 
-	return 0;
+return 0;
+	
 }
 
 
@@ -236,7 +251,20 @@ void Receive_encrypted_file()
 
 	printf("\nPlease enter the name of keyfile use to decrypt Message: ");
 	scanf("%s", keyfile);
-	DisplayFileContents("recievedFile");
+
+	//it should decrypt the file here
+char *argk[5];
+int status;
+	argk[1] = "-d";
+
+	argk[2] = keyfile;
+	argk[3] = argx[2];
+	argk[4] = "receivedFileDecrypted";
+	//run_des [-e|-d] keyfile.key input.file output.file
+	status = Des_function(5, argk);
+
+printf("\nPrinting Decrypted text\n");
+	DisplayFileContents("receivedFileDecrypted");
 }
 
 
@@ -244,8 +272,12 @@ void Receive_encrypted_file()
 void Create_and_send_encrypted_file()
 {
 	printf("Create and send encrypted file function");
-	char *nameofFile = "fileToEncrypt";
-	CreateWriteDataToFile(nameofFile);
+	char *nameofFileEncrypted = "EncryptedFile";
+	char *nameofFileUnEncrypted = "fileToEncrypt";
+
+CreateWriteDataToFile(nameofFileUnEncrypted);
+	//There is an issue with this line, doesn't wait for user input
+	//CreateWriteDataToFile(nameofFileUnEncrypted, "Hello world data");
 	//encrypt and send over network
 	int status;
 	char keyfile[256];
@@ -256,15 +288,18 @@ void Create_and_send_encrypted_file()
 	argv[1] = "-e";
 
 	argv[2] = keyfile;
-	argv[3] = nameofFile;
-	argv[4] = "EncryptedFile";
+	argv[3] = nameofFileUnEncrypted;
+	argv[4] = nameofFileEncrypted;
 	//run_des [-e|-d] keyfile.key input.file output.file
 	status = Des_function(5, argv);
+
+printf("Finished encryption with status %d", status);
 
 	//send file over network
 	char *argx[3];
 	argx[1] = "700";
-	argx[2] = nameofFile;
+	//argx[2] = nameofFileUnEncrypted; //sends unencrypted file
+	argx[2] = nameofFileEncrypted; //sends encrypted file
 	SendFileViaNetwork(3, argx);
 	printf("\n");
 }
@@ -319,14 +354,21 @@ void ReceiveEncryptedKeyOverNetwork()
 	argv[1] = "700";
 	scanf("%s", keyfile);
 	argv[2] = keyfile;
+
+
 	ReceiveFileViaNetwork(3, argv);
+//receive file, decrypt it 
+
+
+//display it.
+
 	printf("\n");
 }
 
 
 
 int main(int argc, char *argv[])
-{
+{	char sen[500];
 	char option, exitOption;
 
 	printf("************************************************\n");
@@ -391,8 +433,10 @@ readOptionAgain:
 	case '7':
 	{
 		char nameofFile[256];
+		char data[1024];
 		printf("\nEnter file name you want to Create and write to: ");
 		scanf("%s", nameofFile);
+
 		CreateWriteDataToFile(nameofFile);
 		printf("\n");
 		break;
